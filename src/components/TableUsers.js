@@ -2,12 +2,18 @@ import Table from 'react-bootstrap/Table';
 import { useEffect, useState } from 'react';
 import { fetchAllUser } from '../services/UserServices';
 import ReactPaginate from 'react-paginate';
+import ModalAddNew from './ModalAddNew';
 
 
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
     const [totalUsers, setTotalUser] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [isShowModalAddNew, setIsShowModalAddNew] = useState(false)
+
+    const hadleClose = () => {
+        setIsShowModalAddNew(false)
+    }
 
     useEffect(() => {
         //call api
@@ -15,6 +21,9 @@ const TableUsers = (props) => {
 
     }, [])
 
+    const handleUpdateUsers = (user) => {
+        setListUsers([user, ...listUsers]);
+    }
 
     const getUsers = async (pageNumber) => {
         let res = await fetchAllUser(pageNumber)
@@ -33,6 +42,14 @@ const TableUsers = (props) => {
     console.log(listUsers);
     return (
         <>
+            <div className='my-5'>
+                <span><h4>List Users</h4></span>
+                <div class="col-md-12 bg-light text-center">
+                    <button type="button" class="btn btn-success"
+                        onClick={() => setIsShowModalAddNew(true)}
+                    >ADD NEW USER</button>
+                </div>
+            </div>
             <Table striped bordered hover variant="light">
                 <thead>
                     <tr>
@@ -57,6 +74,7 @@ const TableUsers = (props) => {
                     }
                 </tbody>
             </Table>
+            <ModalAddNew show={isShowModalAddNew} handleClose={hadleClose} handleUpdateTables={handleUpdateUsers}/>
 
             <ReactPaginate
                 nextLabel="next >"
